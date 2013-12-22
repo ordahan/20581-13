@@ -3,6 +3,8 @@ Created on Dec 22, 2013
 
 @author: ord
 '''
+from solution import Solution
+import time
 
 
 class MatchMaker(object):
@@ -22,5 +24,25 @@ class MatchMaker(object):
         self.items_per_category = items_per_category
         self.generation_size = generation_size
 
-    def run(self):
+    def run(self, seconds_to_run):
+        '''
+        @seconds_to_run - Number in seconds to run the algorithm
+        '''
+        # Generate a pool of random possible solutions
+        self.solutions = \
+            [Solution(categories=self.categories,
+                      categories_size=self.items_per_category)
+             for _ in xrange(self.generation_size)]
+
+        # Run the genetic algorithm for the given number of seconds
+        start_time = time.time()
+        elapsed = 0
+        while (elapsed < seconds_to_run):
+            # Iterate the algorithm
+            self.solutions = self.get_next_generation(self.solutions)
+
+            # Count the running time
+            elapsed = time.time() - start_time
+
+    def get_next_generation(self, solutions):
         pass

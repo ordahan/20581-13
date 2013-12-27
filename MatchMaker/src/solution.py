@@ -13,6 +13,10 @@ class Solution(object):
     to match together.
     '''
 
+
+    def _calculate_fitness(self):
+        return 1
+
     def __init__(self, categories, categories_size):
         '''
         Creates a randome permutation for each of the categories given
@@ -31,6 +35,8 @@ class Solution(object):
 
             # Keep the random permutation created
             self.categories[category] = elements
+
+        self.fitness = self._calculate_fitness()
 
     def crossover(self, other_solution):
         pass

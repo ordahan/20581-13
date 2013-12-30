@@ -38,6 +38,7 @@ class MatchMaker(object):
         @mutation_rate - probability of a mutation occuring
 
         '''
+        # TODO: WOW THATS UGLY SHIT
         # Generate a preference list for each of the categories
         preferences = {}
         for current_category in self.categories:
@@ -57,8 +58,10 @@ class MatchMaker(object):
                 preferences_lists[entity_id] = preference_list
             preferences[current_category] = preferences_lists
 
-        print "Preferences: ", preferences
+        if __debug__:
+            print "Preferences: ", preferences
 
+        # TODO: WOW THATS UGLY SHIT
         # Generate a pool of random possible population
         first_solution_generation = [Solution(categories=self.categories,
                                               categories_size=self.category_size,

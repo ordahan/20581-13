@@ -69,9 +69,10 @@ class Solution(object):
         worst_match_distance_for_category = self.category_size * worst_match_distance_for_entity
         # Match all the categories with their worst matches for all the entities
         max_distance_from_preferences = len(self.categories) * worst_match_distance_for_category
-        print max_distance_from_preferences
+
         return max_distance_from_preferences
 
+    # TODO: WOW THATS UGLY SHIT
     def _distance_from_optimal_solution(self):
         distance = 0
 
@@ -85,17 +86,18 @@ class Solution(object):
                                     if other_category != current_category]
                 # Go over the entity's matches from other categories
                 for other_category in other_categories:
-                    print self
                     # Get the distance of the given entity's matches from
                     # his preferences
                     id_of_current_entity_in_current_category = category_values[entity_id]
                     id_of_matched_entity_in_other_category = self.categories[other_category][entity_id]
+
                     preferences_for_current_entity = self.preferences[current_category][id_of_current_entity_in_current_category]
-                    matched_entitiy_index_in_preferences = \
+                    matched_entity_index_in_preferences = \
                         preferences_for_current_entity[other_category].index(id_of_matched_entity_in_other_category)
-                    print matched_entitiy_index_in_preferences
-                    distance += matched_entitiy_index_in_preferences
-            exit()
+
+                    distance += matched_entity_index_in_preferences
+
+        return distance
 
 
     def _evaluate(self):

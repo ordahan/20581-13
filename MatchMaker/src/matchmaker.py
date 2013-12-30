@@ -77,14 +77,17 @@ class MatchMaker(object):
         start_time = time.time()
         elapsed = 0
         time_to_print = 0
+        print self.population
         while (elapsed < seconds_to_run):
-            print self.population
+
+
 
             if (elapsed == time_to_print):
                 time_to_print += best_result_fitness_print_interval
 
             # Iterate the algorithm
             self.population.advance_generation()
-
+            print self.population
+            exit()
             # Count the running time
             elapsed = int(time.time() - start_time)

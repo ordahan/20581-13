@@ -69,7 +69,7 @@ class SolutionPopulation(object):
                              pool):
         next_generation = []
 
-        for _ in xrange(len(pool)):
+        for _ in xrange(len(self.solutions)):
             first_solution, second_solution = self._selection(pool)
 
             new_solution = self._crossover(first_solution, second_solution)

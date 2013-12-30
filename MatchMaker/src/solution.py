@@ -4,6 +4,7 @@ Created on Dec 22, 2013
 @author: ord
 '''
 from random import shuffle
+from copy import deepcopy
 
 
 class Solution(object):
@@ -33,9 +34,10 @@ class Solution(object):
             self.categories[category] = elements
 
         self.preferences = preferences
-        self.fitness = self._evaluate()
 
-        exit()
+        # Using a roulette-wheel selection method means that we can
+        # use the evaluation function as the fitness
+        self.fitness = self._evaluate()
 
     def __str__(self):
         string_lines = []
@@ -49,12 +51,21 @@ class Solution(object):
         return ' '.join(string_lines)
 
     def crossover(self, other_solution):
-        self._evaluate()
-        return self
+        self.fitness = self._evaluate()
+        return deepcopy(self)
 
     def mutate(self):
-        self._evaluate()
-        pass
+#         if (self.categories.values()[0][0] >= self.categories.values()[0][1]):
+#             a = self.categories.values()[0][1]
+#             self.categories.values()[0][1] = self.categories.values()[0][0]
+#             self.categories.values()[0][0] = a
+#         else:
+#             a = self.categories.values()[0][0]
+#             self.categories.values()[0][0] = self.categories.values()[0][1]
+#             self.categories.values()[0][1] = a
+
+        self.fitness = self._evaluate()
+
 
 
     def _theoretical_non_tight_upper_bound_for_distance(self):

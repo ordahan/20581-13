@@ -6,7 +6,7 @@ Created on Dec 22, 2013
 from solution import Solution
 import time
 from solution_population import SolutionPopulation
-from random import shuffle
+import random
 
 class MatchMaker(object):
     '''
@@ -51,15 +51,15 @@ class MatchMaker(object):
                                     for other_category in self.categories
                                     if other_category != current_category]
                 for other_category in other_categories:
-                    # Generate a preference list that ranks a single current_category
+                    # Generate a random preference list that ranks a single category
                     preference_list[other_category] = range(self.category_size)
-                    shuffle(preference_list[other_category])
+                    random.shuffle(preference_list[other_category])
 
                 preferences_lists[entity_id] = preference_list
             preferences[current_category] = preferences_lists
 
         if __debug__:
-            print "Preferences: ", preferences
+            print "Preferences randomly selected: ", preferences
 
         # TODO: WOW THATS UGLY SHIT
         # Generate a pool of random possible population
@@ -80,14 +80,15 @@ class MatchMaker(object):
         print self.population
         while (elapsed < seconds_to_run):
 
+#             print self.population
+            print "Highest ranking solution: ", self.population.get_best_solution()
 
-
+            # TODO: Print every X
             if (elapsed == time_to_print):
                 time_to_print += best_result_fitness_print_interval
 
             # Iterate the algorithm
             self.population.advance_generation()
-            print self.population
-            exit()
+
             # Count the running time
             elapsed = int(time.time() - start_time)

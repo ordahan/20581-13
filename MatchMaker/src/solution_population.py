@@ -6,6 +6,7 @@ Created on Dec 27, 2013
 from random import choice
 import random
 import math
+from copy import deepcopy
 
 
 class SolutionPopulation(object):
@@ -23,26 +24,26 @@ class SolutionPopulation(object):
         self.mutation_rate = mutation_rate
 
     def _create_selection_pool(self, solutions):
-        '''
-        Create a 'roulette wheel pool' of solutions -
-        the numer of times a solution will appear
-        in the pool is determined by its relative fitness
-        in the population.
-        '''
 
         assert len(solutions) > 0
 
-        total_population_fitness = sum([solution.fitness for solution in
-                                        solutions])
+        mating_pool_size = len(solutions) * 10
+        probability_to_add = 1
 
-        selection_pool = []
-        for solution in solutions:
-            selection_probability = (float(solution.fitness) / total_population_fitness)
-            expected_number_of_offsprings = int(math.ceil(selection_probability * len(solutions)))
-            for _ in range(expected_number_of_offsprings):
-                selection_pool.append(solution)  # TODO: Is it ok to append multiple references?
+        mating_pool = []
 
-        return selection_pool
+        while (len(mating_pool) < mating_pool_size):
+            first, second = self._selection(solutions)
+
+            if (random.random() < probability_to_add):
+                if (first.fitness > second.fitness):
+                    better_solution = first
+                else:
+                    better_solution = second
+
+                mating_pool.append(better_solution)
+
+        return mating_pool
 
     def _selection(self, pool):
         '''
@@ -53,17 +54,18 @@ class SolutionPopulation(object):
         return first_solution, second_solution
 
 
-    def _crossover(self, first_solution, second_solution):
+    def _crossover_with_probability(self, first_solution, second_solution):
         if (random.random() < self.crossover_rate):
-            new_solution = first_solution.crossover(second_solution)
-        else:
-            new_solution = first_solution
-        return new_solution
+            first_solution.crossover(second_solution)
+
+        return first_solution
 
 
-    def _mutate(self, solution):
+    def _mutate_with_probability(self, solution):
         if (random.random() < self.mutation_rate):
             solution.mutate()
+
+        return solution
 
     def _generate_offsprings(self,
                              pool):
@@ -72,11 +74,12 @@ class SolutionPopulation(object):
         for _ in xrange(len(self.solutions)):
             first_solution, second_solution = self._selection(pool)
 
-            new_solution = self._crossover(first_solution, second_solution)
+            offspring = self._crossover_with_probability(deepcopy(first_solution),
+                                                         deepcopy(second_solution))
 
-            self._mutate(new_solution)
+            offspring_mutated = self._mutate_with_probability(offspring)
 
-            next_generation.append(new_solution)
+            next_generation.append(offspring_mutated)
 
         return next_generation
 
@@ -88,13 +91,12 @@ class SolutionPopulation(object):
 
         self.solutions = self._generate_offsprings(selection_pool)
 
-        # Sort the solutions by their fitness
+    def get_best_solution(self):
+        # Sort the solutions by their fitness, place highest first
         self.solutions.sort(cmp=lambda x, y: x.fitness - y.fitness,
                             key=None,
-                            reverse=False)
-
-    def get_best_solution(self):
+                            reverse=True)
         return self.solutions[0]
 
     def __str__(self):
-        return ' || '.join([str(solution) for solution in self.solutions])
+        return ' || '.join([str(solution.fitness) for solution in self.solutions])

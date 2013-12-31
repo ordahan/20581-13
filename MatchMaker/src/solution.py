@@ -5,6 +5,7 @@ Created on Dec 22, 2013
 '''
 from random import shuffle
 from copy import deepcopy
+import random
 
 
 class Solution(object):
@@ -40,33 +41,39 @@ class Solution(object):
         self.fitness = self._evaluate()
 
     def __str__(self):
-        string_lines = []
+        matches = []
 
         for i in xrange(self.category_size):
             match_element = []
             for elements in self.categories.values():
                 match_element.append(str(elements[i]))
-            string_lines.append('(' + ','.join(match_element) + ')')
+            matches.append('(' + ','.join(match_element) + ')')
 
-        return ' '.join(string_lines)
+        return '< Solution | Fitness: %d, Matches: %s>' % (self.fitness,
+                                                           ' '.join(matches))
 
     def crossover(self, other_solution):
+
+        # For each of the categories, select randomly
+        # either this solution's values or the other one's
+        for category_name in self.categories.keys():
+            if (random.choice([True, False])):
+                self.categories[category_name] = deepcopy(other_solution.categories[category_name])
+
         self.fitness = self._evaluate()
-        return deepcopy(self)
 
     def mutate(self):
-#         if (self.categories.values()[0][0] >= self.categories.values()[0][1]):
-#             a = self.categories.values()[0][1]
-#             self.categories.values()[0][1] = self.categories.values()[0][0]
-#             self.categories.values()[0][0] = a
-#         else:
-#             a = self.categories.values()[0][0]
-#             self.categories.values()[0][0] = self.categories.values()[0][1]
-#             self.categories.values()[0][1] = a
+
+        for _ in range(self.category_size / 10):
+            category_to_mutate = random.choice(self.categories.values())
+            first_match_index = random.randrange(self.category_size)
+            second_match_index = random.randrange(self.category_size)
+
+            # Swap the selection from the category for the matches chosen
+            category_to_mutate[first_match_index], category_to_mutate[second_match_index] = \
+                category_to_mutate[second_match_index], category_to_mutate[first_match_index]
 
         self.fitness = self._evaluate()
-
-
 
     def _theoretical_non_tight_upper_bound_for_distance(self):
         '''
@@ -112,4 +119,6 @@ class Solution(object):
 
 
     def _evaluate(self):
-        return self._theoretical_non_tight_upper_bound_for_distance() - self._distance_from_optimal_solution()
+        max_worst_value = self._theoretical_non_tight_upper_bound_for_distance()
+        distance_from_optimal_value = self._distance_from_optimal_solution()
+        return max_worst_value - distance_from_optimal_value

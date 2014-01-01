@@ -24,9 +24,11 @@ class MatchMaker(object):
         self.categories = categories
         self.category_size = category_size
 
+        self.preferences = self._generate_random_preferences()
+
     def run(self,
             seconds_to_run,
-            best_result_fitness_print_interval=30,
+            best_result_distance_print_interval=30,
             crossover_rate=0.5,
             mutation_rate=0.7,
             generation_size=100):
@@ -39,33 +41,10 @@ class MatchMaker(object):
 
         '''
         # TODO: WOW THATS UGLY SHIT
-        # Generate a preference list for each of the categories
-        preferences = {}
-        for current_category in self.categories:
-            # Generate preferences lists for each of the entities in the current current_category
-            preferences_lists = {}
-            for entity_id in xrange(self.category_size):
-                # Generate a preference list - ranking the entities in all the other categories
-                preference_list = {}
-                other_categories = [other_category
-                                    for other_category in self.categories
-                                    if other_category != current_category]
-                for other_category in other_categories:
-                    # Generate a random preference list that ranks a single category
-                    preference_list[other_category] = range(self.category_size)
-                    random.shuffle(preference_list[other_category])
-
-                preferences_lists[entity_id] = preference_list
-            preferences[current_category] = preferences_lists
-
-        if __debug__:
-            print "Preferences randomly selected: ", preferences
-
-        # TODO: WOW THATS UGLY SHIT
         # Generate a pool of random possible population
         first_solution_generation = [Solution(categories=self.categories,
                                               categories_size=self.category_size,
-                                              preferences=preferences)
+                                              preferences=self.preferences)
                                      for _ in xrange(generation_size)]
 
         self.population = SolutionPopulation(solutions=first_solution_generation,
@@ -77,18 +56,38 @@ class MatchMaker(object):
         start_time = time.time()
         elapsed = 0
         time_to_print = 0
-        print self.population
         while (elapsed < seconds_to_run):
 
-#             print self.population
-            print "Highest ranking solution: ", self.population.get_best_solution()
+#              print "ELAPSED: %d, Highest ranking solution: %s" % (elapsed,
+#                                                                  self.population.get_best_solution())
 
             # TODO: Print every X
-            if (elapsed == time_to_print):
-                time_to_print += best_result_fitness_print_interval
+            if (elapsed >= time_to_print):
+                time_to_print += best_result_distance_print_interval
+                print self.population.get_best_solution()._distance_from_optimal_solution()
 
             # Iterate the algorithm
             self.population.advance_generation()
 
             # Count the running time
             elapsed = int(time.time() - start_time)
+
+    def _generate_random_preferences(self):
+        # Generate a preference list for each of the categories
+        preferences = {}
+        for current_category in self.categories:  # Generate preferences lists for each of the entities in the current current_category
+            preferences_lists = {}
+            for entity_id in xrange(self.category_size):  # Generate a preference list - ranking the entities in all the other categories
+                preference_list = {}
+                other_categories = [other_category for other_category in self.categories if other_category != current_category]
+                for other_category in other_categories:
+                    # Generate a random preference list that ranks a single category
+                    preference_list[other_category] = range(self.category_size)
+                    random.shuffle(preference_list[other_category])
+
+                preferences_lists[entity_id] = preference_list
+
+            preferences[current_category] = preferences_lists
+
+        return preferences
+

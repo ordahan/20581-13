@@ -5,9 +5,6 @@ Created on Dec 27, 2013
 '''
 from random import choice
 import random
-import math
-from copy import deepcopy
-
 
 class SolutionPopulation(object):
     '''
@@ -28,7 +25,7 @@ class SolutionPopulation(object):
         assert len(solutions) > 0
 
         mating_pool_size = len(solutions) * 10
-        probability_to_add = 1
+        probability_to_add = 0.5
 
         mating_pool = []
 
@@ -73,9 +70,11 @@ class SolutionPopulation(object):
 
         for _ in xrange(len(self.solutions)):
             first_solution, second_solution = self._selection(pool)
+            first_solution = first_solution.clone()
+            second_solution = second_solution.clone()
 
-            offspring = self._crossover_with_probability(deepcopy(first_solution),
-                                                         deepcopy(second_solution))
+            offspring = self._crossover_with_probability(first_solution,
+                                                         second_solution)
 
             offspring_mutated = self._mutate_with_probability(offspring)
 

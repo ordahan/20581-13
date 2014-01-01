@@ -4,7 +4,6 @@ Created on Dec 22, 2013
 @author: ord
 '''
 from random import shuffle
-from copy import deepcopy
 import random
 
 
@@ -15,7 +14,7 @@ class Solution(object):
     to match together.
     '''
 
-    def __init__(self, categories, categories_size, preferences):
+    def __init__(self, categories, categories_size, preferences, random=True):
         '''
         Creates a randome permutation for each of the categories given
 
@@ -24,21 +23,37 @@ class Solution(object):
         '''
         self.category_size = categories_size
         self.categories = {}
-        for category in categories:
-            # Creates a list of all the elements in the category
-            elements = range(categories_size)
 
-            # Shuffle the elements randomly
-            shuffle(elements)
+        if (random):
+            for category in categories:
+                # Creates a list of all the elements in the category
+                elements = range(categories_size)
 
-            # Keep the random permutation created
-            self.categories[category] = elements
+                # Shuffle the elements randomly
+                shuffle(elements)
+
+                # Keep the random permutation created
+                self.categories[category] = elements
 
         self.preferences = preferences
 
         # Using a roulette-wheel selection method means that we can
         # use the evaluation function as the fitness
         self.fitness = self._evaluate()
+
+    def clone(self):
+        clone = Solution(categories=self.categories.keys(),
+                         categories_size=self.category_size,
+                         preferences=self.preferences,
+                         random=False)
+
+
+        for category_name, values in self.categories.items():
+            a = []
+            a.extend(values)
+            clone.categories[category_name] = a
+
+        return clone
 
     def __str__(self):
         matches = []
@@ -58,7 +73,7 @@ class Solution(object):
         # either this solution's values or the other one's
         for category_name in self.categories.keys():
             if (random.choice([True, False])):
-                self.categories[category_name] = deepcopy(other_solution.categories[category_name])
+                self.categories[category_name] = other_solution.categories[category_name]
 
         self.fitness = self._evaluate()
 

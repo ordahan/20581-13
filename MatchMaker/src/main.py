@@ -8,10 +8,26 @@ from matchmaker import MatchMaker
 if __name__ == '__main__':
     print "Welcome to Match Maker, enjoy."
 
-    import cProfile
+    # Check crossovers effect
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~ With plenty of crossovers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    MatchMaker(categories=['women', 'dogs', 'men'],
+               category_size=50,
+               ).run(seconds_to_run=180,
+                     crossover_rate=1.0,
+                     mutation_rate=0.3,
+                     generation_size=40,
+                     best_result_distance_print_interval=200,
+                     verbose=True)
 
-    profiler = cProfile.Profile()
-
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~~~ No crossovers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    MatchMaker(categories=['women', 'dogs', 'men'],
+               category_size=50,
+               ).run(seconds_to_run=180,
+                     crossover_rate=0.0,
+                     mutation_rate=0.3,
+                     generation_size=40,
+                     best_result_distance_print_interval=200,
+                     verbose=True)
 
     # Print with random preferences each time
     print "~~~~~~~~~~~~~~~~~~~~~~~~~~~ Random preferences ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"

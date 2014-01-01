@@ -31,14 +31,15 @@ class MatchMaker(object):
             best_result_distance_print_interval=30,
             crossover_rate=0.5,
             mutation_rate=0.7,
-            generation_size=100):
+            generation_size=100,
+            verbose=False):
         '''
         @seconds_to_run - Number in seconds to run the algorithm
         @generation_size - how many solutions will there be in each
         generation of the genetic algorithm.
         @crossover_rate - probability of a crossover occuring
         @mutation_rate - probability of a mutation occuring
-
+        @verbose - whether or not should the function print major checkpoints while running
         '''
         # TODO: WOW THATS UGLY SHIT
         # Generate a pool of random possible population
@@ -58,8 +59,8 @@ class MatchMaker(object):
         time_to_print = 0
         while (elapsed < seconds_to_run):
 
-#              print "ELAPSED: %d, Highest ranking solution: %s" % (elapsed,
-#                                                                  self.population.get_best_solution())
+            if (verbose):
+                print "%s" % self.population.get_best_solution().fitness
 
             # TODO: Print every X
             if (elapsed >= time_to_print):
